@@ -1,0 +1,107 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>To-Do list</title>
+
+  <link rel="icon" type="image/png" href="icon.png" />
+  <link rel="apple-touch-icon" href="icon.png">
+  <link rel="shortcut icon" href="icon.ico" />
+
+  <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.5.0/pure-min.css">
+  <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.5.0/grids-responsive-min.css">
+  <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body v-on="keyup:activate | key 78">
+
+  <div id="toDoList" class="pure-g">
+    <header class="pure-u-1 box">
+      <h1><i class="fa fa-bars"></i> {{title | uppercase}}: {{doingItems}}</h1>
+      <p>{{doneItems}} completed, {{remainingItems}} remain</p>
+    </header>
+    <section class="pure-u-1 box doing">
+      <table class="list">
+        <tr v-repeat="todos | todosDoing" id="item{{id}}">
+          <td class="checkbox"><i class="fa" v-class="fa-circle: !isPastDue(this),fa-exclamation-circle: isPastDue(this)" v-on="click:markDone(this)"></i>
+          </td>
+          <td class="text clickable" v-on="click:editItem(this)" v-class="itemDue: isDue(this)">{{content}}<i class="badge" v-show="more">...</i> <i class="fa fa-clock-o badge" v-show="isDueOn(this)"></i><i class="fa fa-refresh badge" v-show="recureOn>0"></i></td>
+          <td class="toolbox"><span class="priority" v-class="low: priority<3, med: priority>2&&5>priority, high: priority>4">{{priority}}</span><i class="fa fa-angle-up clickable" v-on="click: upvoteItem(this)"></i><i class="fa fa-angle-down clickable" v-on="click: downvoteItem(this)"></i>
+          </td>
+        </tr>
+      </table>
+    </section>
+    <section class="pure-u-1 box qued">
+      <table class="list">
+        <tr v-repeat="todos | todosQued" id="item{{id}}">
+          <td class="checkbox"><i class="fa fa-circle-o" v-on="click:markDoing(this)"></i>
+          </td>
+            <td class="text clickable" v-on="click:editItem(this)" v-class="itemDue: isDue(this)">{{content}}<i class="badge" v-show="more">...</i> <i class="fa fa-clock-o badge" v-show="isDueOn(this)"></i><i class="fa fa-refresh badge" v-show="recureOn>0"></i></td>
+          <td class="toolbox"><span class="priority" v-class="low: priority<3, med: priority>2&&5>priority, high: priority>4">{{priority}}</span><i class="fa fa-angle-up clickable" v-on="click: upvoteItem(this)"></i><i class="fa fa-angle-down clickable" v-on="click: downvoteItem(this)"></i>
+          </td>
+        </tr>
+      </table>
+    </section>
+    <section class="pure-u-1 box done">
+      <table class="list">
+        <tr v-repeat="todos | todosDone" id="item{{id}}">
+          <td class="checkbox"><i class="fa fa-chevron-circle-down" v-on="click: resetItem(this)"></i>
+          </td>
+          <td class="text">{{content}}</td>
+          <td class="toolbox"><i class="fa fa-archive clickable" v-on="click: archiveItem(this)"></i><i class="fa fa-trash clickable" v-on="click: removeItem(this)"></i>
+          </td>
+        </tr>
+      </table>
+    </section>
+    <div class="affixed clickable addButton" v-on="click:activate"><i class="fa fa-plus"></i>
+    </div>
+    <div class="pure-u-1 overlay {{active ? 'active' : ''}}">
+      <div class="callout positioned l-box">
+        <div class="pure-form pure-form-stacked">
+          <fieldset>
+            <legend>Press enter to add the new to-do item, or esc to cancel</legend>
+            <input class="pure-input-1" type="text" v-model="newItemValue" v-on="keyup:newItem | key enter, keyup:cancel | key esc" placeholder="Add new to-do item..." />
+            <div class="button-group">
+              <button class="pure-button pure-button-flat" v-on="click:cancel">Cancel</button>
+              <button class="pure-button pure-button-primary" v-on="click:newItem">Add</button>
+            </div>
+          </fieldset>
+        </div>
+      </div>
+    </div>
+    <div class="pure-u-1 overlay {{editing ? 'active' : ''}}">
+      <div class="modal positioned l-box">
+        <div class="pure-form pure-form-stacked">
+          <fieldset>
+            <input id="itemContent" class="pure-input-1" type="text" placeholder="To-do item" v-model="editedItemData.content" />
+            <textarea id="itemMore" class="pure-input-1" placeholder="Details..." rows="4" v-model="editedItemData.more"></textarea>
+            <label>Due date:
+              <input id="itemDue" class="pure-input-1" type="date" v-model="editedItemData.dueOn" />
+            </label>
+            <label>Recure:
+              <select id="itemRecure" class="pure-input-1" v-model="editedItemData.recureOn">
+                <option value="0">Never</option>
+                <option value="1">Daily</option>
+                <option value="2">Weekly</option>
+                <option value="3">Monthly</option>
+                <option value="4">Anually</option>
+              </select>{{selected}}</label>
+            <div class="button-group">
+              <button class="pure-button pure-button-flat" v-on="click:editing=false">Cancel</button>
+              <button class="pure-button pure-button-primary" v-on="click:updateItem">Update</button>
+            </div>
+          </fieldset>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="text/javascript" src="http://vuejs.org/js/vue.min.js"></script>
+  <script type="text/javascript" src="storage.js"></script>
+  <script type="text/javascript" src="driver.js"></script>
+
+</body>
+
+</html>
