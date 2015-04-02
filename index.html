@@ -16,6 +16,27 @@
 </head>
 
 <body v-on="keyup:activate | key 78">
+    
+<script type="text/x-template" id="template-todo-item">
+<tr id="item{{id}}">
+  <td class="checkbox">
+    <i class="fa" v-class="fa-circle-o: isQued,fa-circle: isDoing,fa-exclamation-circle: isPastDue,fa-chevron-circle-down: isDone" v-on="click:markDo"></i>
+  </td>
+  <td class="text clickable" v-on="click:edit" v-class="itemDue: isDue">
+    {{content}}<i class="badge" v-show="more">...</i> 
+    <i class="fa fa-clock-o badge" v-show="hasDueOn"></i>
+    <i class="fa fa-refresh badge" v-show="recureOn>0"></i>
+  </td>
+  <td class="toolbox" v-show="!done">
+    <span class="priority" v-class="low: priority<3, med: priority>2&&5>priority, high: priority>4">
+        {{priority}}
+    </span><i class="fa fa-angle-up clickable" v-on="click: upvote"></i><i class="fa fa-angle-down clickable" v-on="click: downvote"></i>
+  </td>
+  <td class="toolbox" v-show="done">
+    <i class="fa fa-archive clickable" v-on="click: archive"></i><i class="fa fa-trash clickable" v-on="click: remove"></i>
+  </td>
+<tr>
+</script>
 
   <div id="toDoList" class="pure-g">
     <header class="pure-u-1 box">
@@ -24,38 +45,20 @@
     </header>
     <section class="pure-u-1 box doing">
       <table class="list">
-        <tr v-repeat="todos | todosDoing" id="item{{id}}">
-          <td class="checkbox"><i class="fa" v-class="fa-circle: !isPastDue(this),fa-exclamation-circle: isPastDue(this)" v-on="click:markDone(this)"></i>
-          </td>
-          <td class="text clickable" v-on="click:editItem(this)" v-class="itemDue: isDue(this)">{{content}}<i class="badge" v-show="more">...</i> <i class="fa fa-clock-o badge" v-show="isDueOn(this)"></i><i class="fa fa-refresh badge" v-show="recureOn>0"></i></td>
-          <td class="toolbox"><span class="priority" v-class="low: priority<3, med: priority>2&&5>priority, high: priority>4">{{priority}}</span><i class="fa fa-angle-up clickable" v-on="click: upvoteItem(this)"></i><i class="fa fa-angle-down clickable" v-on="click: downvoteItem(this)"></i>
-          </td>
-        </tr>
+        <tr v-repeat="todos | todosDoing" v-component="todo-item"></tr>
       </table>
     </section>
     <section class="pure-u-1 box qued">
       <table class="list">
-        <tr v-repeat="todos | todosQued" id="item{{id}}">
-          <td class="checkbox"><i class="fa fa-circle-o" v-on="click:markDoing(this)"></i>
-          </td>
-            <td class="text clickable" v-on="click:editItem(this)" v-class="itemDue: isDue(this)">{{content}}<i class="badge" v-show="more">...</i> <i class="fa fa-clock-o badge" v-show="isDueOn(this)"></i><i class="fa fa-refresh badge" v-show="recureOn>0"></i></td>
-          <td class="toolbox"><span class="priority" v-class="low: priority<3, med: priority>2&&5>priority, high: priority>4">{{priority}}</span><i class="fa fa-angle-up clickable" v-on="click: upvoteItem(this)"></i><i class="fa fa-angle-down clickable" v-on="click: downvoteItem(this)"></i>
-          </td>
-        </tr>
+        <tr v-repeat="todos | todosQued" v-component="todo-item"></tr>
       </table>
     </section>
     <section class="pure-u-1 box done">
       <table class="list">
-        <tr v-repeat="todos | todosDone" id="item{{id}}">
-          <td class="checkbox"><i class="fa fa-chevron-circle-down" v-on="click: resetItem(this)"></i>
-          </td>
-          <td class="text">{{content}}</td>
-          <td class="toolbox"><i class="fa fa-archive clickable" v-on="click: archiveItem(this)"></i><i class="fa fa-trash clickable" v-on="click: removeItem(this)"></i>
-          </td>
-        </tr>
+        <tr v-repeat="todos | todosDone" v-component="todo-item"></tr>
       </table>
     </section>
-    <div class="affixed clickable addButton" v-on="click:activate"><i class="fa fa-plus"></i>
+    <div class="affixed clickable addButton" v-on="click:onNewItemClicked"><i class="fa fa-plus"></i>
     </div>
     <div class="pure-u-1 overlay {{active ? 'active' : ''}}">
       <div class="callout positioned l-box">
@@ -64,8 +67,8 @@
             <legend>Press enter to add the new to-do item, or esc to cancel</legend>
             <input class="pure-input-1" type="text" v-model="newItemValue" v-on="keyup:newItem | key enter, keyup:cancel | key esc" placeholder="Add new to-do item..." />
             <div class="button-group">
-              <button class="pure-button pure-button-flat" v-on="click:cancel">Cancel</button>
-              <button class="pure-button pure-button-primary" v-on="click:newItem">Add</button>
+              <button class="pure-button pure-button-flat" v-on="click:onNewItemCancelled">Cancel</button>
+              <button class="pure-button pure-button-primary" v-on="click:createNewItem">Add</button>
             </div>
           </fieldset>
         </div>
@@ -90,7 +93,7 @@
               </select>{{selected}}</label>
             <div class="button-group">
               <button class="pure-button pure-button-flat" v-on="click:editing=false">Cancel</button>
-              <button class="pure-button pure-button-primary" v-on="click:updateItem">Update</button>
+              <button class="pure-button pure-button-primary" v-on="click:onUpdateItemClicked">Update</button>
             </div>
           </fieldset>
         </div>

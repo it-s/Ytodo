@@ -14,7 +14,7 @@
       this.addedOn = new Date();
       this.dueOn = null;
       this.doneOn = null;
-      this.recureOn = null;
+      this.recureOn = 0;
       this.tags = [];
     };
     
@@ -62,6 +62,94 @@
       }
       return dueDate;
   }
+    
+  Vue.component('todo-item', {
+      template: '#template-todo-item',
+      replace: 'true',
+      computed: {
+        hasDueOn: function() {
+            return this.dueOn != null && this.recureOn == 0;
+        },
+        isQued: function() {return !this.doing&&!this.done&&!this.archived},
+        isDoing: function() {return this.doing&&!this.done&&!this.archived},
+        isDone: function() {return !this.doing&&this.done&&!this.archived},
+        isDue: function() {
+            if (this.dueOn == null) return false;
+            var then = new Date(this.dueOn),
+                now = new Date();
+            return then == now;
+        },
+        isPastDue: function() {
+            if (this.dueOn == null) return false;
+            var then = new Date(this.dueOn),
+                now = new Date();
+            return then < now;
+        }
+      },
+      methods: {
+        upvote: function (e) {
+          e.cancelBubble = true;
+          if (this.priority + 1 < 6) this.priority++;
+        },
+        downvote: function (e) {
+          e.cancelBubble = true;
+          if (this.priority - 1 > -1) this.priority--;
+        },
+        markDo: function (e) {
+            e.cancelBubble = true;
+            if(this.archived) return;
+            if(!this.doing&&!this.done){
+              this.doing = true;
+              this.done = false;
+            }else if(this.doing&&!this.done){
+              this.doneOn = new Date();
+              this.doing = false;
+              if (this.recureOn == 0) this.done = true;
+              else {
+                  this.dueOn = computeNextDueDate(this.dueOn, this.recureOn);
+              }                
+            }else if(!this.doing&&this.done){
+              this.doneOn = null;
+              this.archived = false;
+              this.doing = false;
+              this.done = false;
+            }
+        },
+        archive: function (e) {
+            e.cancelBubble = true;
+            this.archived = true;
+        },
+        remove: function (e) {
+            e.cancelBubble = true;
+//          this.$remove(this);
+        }
+      }
+  });
+    
+//  Vue.component('todo-table', {
+//      template: '#template-table',
+//      replace: 'true',      
+//      computed: {
+//        isDueOn: function() {
+//            return item.dueOn != null && item.recureOn == 0;
+//        },
+//        isDue: function(item) {
+//            if (item.dueOn == null) return false;
+//            var then = new Date(item.dueOn),
+//                now = new Date();
+//            return then <= now;
+//        },
+//        isPastDue: function(item) {
+//            if (item.dueOn == null) return false;
+//            var then = new Date(item.dueOn),
+//                now = new Date();
+//            return then < now;
+//        }
+//      },
+//      methods: {
+//          
+//      }
+//  };
   
   var ToDos = new Vue({
       el: '#toDoList',
@@ -83,30 +171,38 @@
         todosQued: function (todos) {
           return todos.filter(function (todo) {
             return !todo.done && !todo.doing
+          }).sort(function (a, b) {
+            return a.priority < b.priority;
           });
         },
         todosDoing: function (todos) {
           return todos.filter(function (todo) {
             return todo.doing && !todo.done
+          }).sort(function (a, b) {
+            return a.priority < b.priority;
           });
         },
         todosDone: function (todos) {
           return todos.filter(function (todo) {
             return todo.done && !todo.archived
+          }).sort(function (a, b) {
+            return a.doneOn < b.doneOn;
           });
         },
         todosArchived: function (todos) {
           return todos.filter(function (todo) {
             return todo.archived
+          }).sort(function (a, b) {
+            return a.doneOn < b.doneOn;
           });
         }
       },
       ready: function () {
         if (LocalDrive) this.todos = LocalDrive.fetch(STORAGE_KEY);
         this.$watch('todos', function (todos) {
-          todos.sort(function (a, b) {
-            return a.done?false : a.priority < b.priority;
-          });
+//          todos.sort(function (a, b) {
+//            return a.done?false : a.priority < b.priority;
+//          });
           if (LocalDrive) LocalDrive.save(STORAGE_KEY, todos);
         }, true);
           refreshDueDates(this);
@@ -137,18 +233,18 @@
         }
       },
       methods: {
-        activate: function () {
+        onNewItemClicked: function () {
           var el = this.$el;
           this.active = true;
           setTimeout(function () {
             el.getElementsByTagName('input')[0].focus();
           }, 100);
         },
-        cancel: function () {
+        onNewItemCancelled: function () {
           this.newItemValue = '';
           this.active = false;
         },
-        newItem: function () {
+        createNewItem: function () {
           var value = this.newItemValue && this.newItemValue.trim();
           if (value)
             this.todos.unshift(new ToDo(this.todos.length, value));
@@ -157,7 +253,7 @@
           this.$event.cancelBubble = true;
           this.$event.returnValue = false;
         },
-        editItem: function (item) {
+        onEditItemClicked: function (item) {
           this.editedItemData.index    = this.$data.todos.lastIndexOf(item.$data);
           this.editedItemData.content   = item.content;
           this.editedItemData.more      = item.more     || "";
@@ -165,7 +261,7 @@
           this.editedItemData.recureOn  = item.recureOn || 0;
           this.editing = true;
         },
-        updateItem: function () {
+        onUpdateItemClicked: function () {
           var dateField = document.getElementById("itemDue");
           var item = this.$data.todos[this.editedItemData.index];
           item.content = this.editedItemData.content;
@@ -173,56 +269,6 @@
           item.dueOn = this.editedItemData.dueOn==""?null:dateField.valueAsDate;
           item.recureOn = this.editedItemData.recureOn;
           this.editing = false;
-        },
-        upvoteItem: function (item) {
-          item.$event.cancelBubble = true;
-          if (item.priority + 1 < 6) item.priority++;
-        },
-        downvoteItem: function (item) {
-          item.$event.cancelBubble = true;
-          if (item.priority - 1 > -1) item.priority--;
-        },
-        markDoing: function (item) {
-          item.doing = true;
-          item.done = false;
-        },
-        markDone: function (item) {
-          item.doneOn = new Date();
-          item.doing = false;
-          if (item.recureOn == 0) item.done = true;
-          else {
-              item.dueOn = computeNextDueDate(item.dueOn, item.recureOn);
-          }
-        },
-        resetItem: function (item) {
-          item.$event.cancelBubble = true;
-          item.doneOn = null;
-          item.archived = false;
-          item.doing = false;
-          item.done = false;
-        },
-        archiveItem: function (item) {
-          item.$event.cancelBubble = true;
-          item.archived = true;
-        },
-        removeItem: function (item) {
-          item.$event.cancelBubble = true;
-          this.todos.$remove(item.$data);
-        },
-        isDueOn: function(item) {
-            return item.dueOn != null && item.recureOn == 0;
-        },
-        isDue: function(item) {
-            if (item.dueOn == null) return false;
-            var then = new Date(item.dueOn),
-                now = new Date();
-            return then <= now;
-        },
-        isPastDue: function(item) {
-            if (item.dueOn == null) return false;
-            var then = new Date(item.dueOn),
-                now = new Date();
-            return then < now;
         }
       }
     });
