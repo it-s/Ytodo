@@ -21,8 +21,10 @@ body{color: #666; font-size: 18px; background-color: #eee;
   box-sizing: border-box;}
 .clickable,
 .checkbox {cursor: pointer;transform: scale(1,1)}
+/*
 .checkbox:active,
 .clickable:active{;transform: scale(0.8,0.8)}
+*/
 .checkbox:hover{color:#000}
 
 header,

@@ -22,7 +22,7 @@
   <td class="checkbox">
     <i class="fa" v-class="fa-circle-o: isQued,fa-circle: isDoing,fa-exclamation-circle: isPastDue,fa-chevron-circle-down: isDone" v-on="click:markDo"></i>
   </td>
-  <td class="text clickable" v-on="click:edit" v-class="itemDue: isDue">
+  <td class="text clickable" v-on="click:$parent.onEditItemClicked($data)" v-class="itemDue: isDue">
     {{content}}<i class="badge" v-show="more">...</i> 
     <i class="fa fa-clock-o badge" v-show="hasDueOn"></i>
     <i class="fa fa-refresh badge" v-show="recureOn>0"></i>
@@ -101,7 +101,8 @@
     </div>
   </div>
 
-  <script type="text/javascript" src="http://vuejs.org/js/vue.min.js"></script>
+  <script type="text/javascript" src="lib/moment.min.js"></script>
+  <script type="text/javascript" src="lib/vue.min.js"></script>
   <script type="text/javascript" src="storage.js"></script>
   <script type="text/javascript" src="driver.js"></script>
 
