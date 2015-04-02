@@ -1,5 +1,7 @@
 /*global Vue, todoStorage */
 (function (exports) {
+    
+  var STORAGE_KEY = 'debug-todo-store';
 
   var ToDo = function (id, content) {
       this.id = id;
@@ -100,12 +102,12 @@
         }
       },
       ready: function () {
-        if (LocalDrive) this.todos = LocalDrive.fetch();
+        if (LocalDrive) this.todos = LocalDrive.fetch(STORAGE_KEY);
         this.$watch('todos', function (todos) {
           todos.sort(function (a, b) {
-            return a.priority < b.priority;
+            return a.done?false : a.priority < b.priority;
           });
-          if (LocalDrive) LocalDrive.save(todos);
+          if (LocalDrive) LocalDrive.save(STORAGE_KEY, todos);
         }, true);
           refreshDueDates(this);
       },

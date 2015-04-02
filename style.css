@@ -1,4 +1,6 @@
+@import url(http://fonts.googleapis.com/css?family=Roboto+Condensed:300);
 body{color: #666; font-size: 18px; background-color: #eee;
+    font-family: 'Roboto Condensed', sans-serif;
     -webkit-touch-callout: none;
     -webkit-user-select: none;
     -khtml-user-select: none;
@@ -18,12 +20,10 @@ body{color: #666; font-size: 18px; background-color: #eee;
 .l-box { padding: 1.4em;
   box-sizing: border-box;}
 .clickable,
-.checkbox {cursor: pointer}
-/*.clickable{opacity:0.6}*/
-.clickable:hover,
-.clickable:active{opacity: 1}
-.checkbox:hover,
-.checkbox:active{color:#000}
+.checkbox {cursor: pointer;transform: scale(1,1)}
+.checkbox:active,
+.clickable:active{;transform: scale(0.8,0.8)}
+.checkbox:hover{color:#000}
 
 header,
 .doing{

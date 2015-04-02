@@ -1,13 +1,14 @@
 /*jshint unused:false */
 (function (exports) {
     'use strict';
-    var STORAGE_KEY = 'super-todos-store';
     exports.LocalDrive = {
-        fetch: function () {
+        fetch: function (STORAGE_KEY) {
+            if (!STORAGE_KEY) return false;
             return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
         },
-        save: function (todos) {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(todos));
+        save: function (STORAGE_KEY, todos) {
+            if (!STORAGE_KEY) return false;
+            return localStorage.setItem(STORAGE_KEY, JSON.stringify(todos));
         }
     };
 })(window);
