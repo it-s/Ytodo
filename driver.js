@@ -129,6 +129,25 @@
             }
         }
     });
+    
+    Vue.component('modal-overlay', {
+        template: '#template-overlay',
+        replace: 'true',
+        data: {
+            type: "modal",
+            position: ["10%","0"],
+            visible: false,
+            value: null
+        },
+        methods: {
+            open: function(e){
+                this.visible = true;
+            },
+            close: function (e){
+                this.visible = false;
+            }
+        }
+    });
 
     var ToDos = new Vue({
         el: '#toDoList',
