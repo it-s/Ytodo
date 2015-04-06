@@ -20,7 +20,7 @@
 <script type="text/x-template" id="template-todo-item">
 <tr id="item{{id}}">
   <td class="checkbox">
-    <i class="fa" v-class="fa-circle-o: isQued,fa-circle: isDoing,fa-exclamation-circle: isPastDue,fa-chevron-circle-down: isDone" v-on="click:markDo"></i>
+    <i class="fa" v-class="fa-circle-o: isQued,fa-circle: isDoing&&!isPastDue,fa-exclamation-circle: isPastDue,fa-chevron-circle-down: isDone" v-on="click:markDo"></i>
   </td>
   <td class="text clickable" v-on="click:$parent.onEditItemClicked($data)" v-class="itemDue: isDue">
     {{content}} <i class="badge" v-show="more">...</i> 

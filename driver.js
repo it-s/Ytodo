@@ -38,10 +38,7 @@
         timeout = next - now;
 
         instance.todos.forEach(function (item) {
-            if (item.dueOn == null) return;
-            var then =item.dueOn,
-                now = moment();
-            if (then <= now) item.doing = true;
+            if (item.isDue && !item.doing) item.doing = true;
         });
 
         setTimeout(function () {
@@ -76,25 +73,21 @@
                 return this.dueOn != null && this.recureOn == 0;
             },
             isQued: function () {
-                return !this.doing && !this.done && !this.archived
+                return !this.doing && !this.done && !this.archived;
             },
             isDoing: function () {
-                return this.doing && !this.done && !this.archived
+                return this.doing && !this.done && !this.archived;
             },
             isDone: function () {
-                return !this.doing && this.done && !this.archived
+                return this.done && !this.archived;
             },
             isDue: function () {
                 if (this.dueOn == null) return false;
-                var then = this.dueOn,
-                    now = moment();
-                return then == now;
+                return this.dueOn.isBefore(moment());
             },
             isPastDue: function () {
                 if (this.dueOn == null) return false;
-                var then = this.dueOn,
-                    now = moment();
-                return then < now;
+                return this.dueOn.isBefore(moment(),"day");
             }
         },
         methods: {
@@ -128,7 +121,7 @@
             },
             archive: function (e) {
                 e.cancelBubble = true;
-                this.archived = true;
+                this.archived = !this.archived;
             },
             remove: function (e) {
                 e.cancelBubble = true;
@@ -149,6 +142,32 @@
                 more: "",
                 dueOn: "",
                 recureOn: 0
+            },
+            options: {
+                sections: {
+                    doing: {
+                        show: true,
+                        sortBy: "priority",
+                        sortOrder: 1
+                    },
+                    todo: {
+                        show: true,
+                        sortBy: "priority",
+                        sortOrder: 1
+                    },
+                    done: {
+                        show: true,
+                        sortBy: "doneOn",
+                        sortOrder: 1
+                    },
+                    archived: {
+                        show: true,
+                        sortBy: "doneOn",
+                        sortOrder: 1
+                    }
+                },
+                archiveAfter: 15,
+                deleteAfter: 0
             },
             todos: []
         },
