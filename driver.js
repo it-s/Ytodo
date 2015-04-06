@@ -140,11 +140,10 @@
     var ToDos = new Vue({
         el: '#toDoList',
         data: {
-            title: 'Doing',
-            active: false,
-            editing: false,
-            newItemValue: "",
-            editedItemData: {
+            newItem: false,
+            newItemData: "",
+            editingItem: false,
+            editingItemData: {
                 index: null,
                 content: "",
                 more: "",
@@ -218,40 +217,36 @@
         methods: {
             onNewItemClicked: function () {
                 var el = this.$el;
-                this.active = true;
+                this.newItemData = '';
+                this.newItem = true;
                 setTimeout(function () {
                     el.getElementsByTagName('input')[0].focus();
                 }, 100);
             },
-            onNewItemCancelled: function () {
-                this.newItemValue = '';
-                this.active = false;
-            },
-            createNewItem: function () {
-                var value = this.newItemValue && this.newItemValue.trim();
+            onAddItemClicked: function () {
+                var value = this.newItemData && this.newItemData.trim();
                 if (value)
                     this.todos.unshift(new ToDo(this.todos.length, value));
-                this.newItemValue = '';
-                this.active = false;
+                this.newItemData = '';
+                this.newItem = false;
                 this.$event.cancelBubble = true;
                 this.$event.returnValue = false;
             },
             onEditItemClicked: function (item) {
-                this.editedItemData.index = this.$data.todos.lastIndexOf(item);
-                this.editedItemData.content = item.content;
-                this.editedItemData.more = item.more || "";
-                this.editedItemData.dueOn = item.dueOn? item.dueOn.format("YYYY-MM-DD"): "";
-                this.editedItemData.recureOn = item.recureOn || 0;
-                this.editing = true;
+                this.editingItemData.index = this.$data.todos.lastIndexOf(item);
+                this.editingItemData.content = item.content;
+                this.editingItemData.more = item.more || "";
+                this.editingItemData.dueOn = item.dueOn? item.dueOn.format("YYYY-MM-DD"): "";
+                this.editingItemData.recureOn = item.recureOn || 0;
+                this.editingItem = true;
             },
             onUpdateItemClicked: function () {
-                var dateField = document.getElementById("itemDue");
-                var item = this.$data.todos[this.editedItemData.index];
-                item.content = this.editedItemData.content;
-                item.more = this.editedItemData.more;
-                item.dueOn = this.editedItemData.dueOn == "" ? null : moment(this.editedItemData.dueOn);
-                item.recureOn = this.editedItemData.recureOn;
-                this.editing = false;
+                var item = this.$data.todos[this.editingItemData.index];
+                item.content = this.editingItemData.content;
+                item.more = this.editingItemData.more;
+                item.dueOn = this.editingItemData.dueOn == "" ? null : moment(this.editingItemData.dueOn);
+                item.recureOn = this.editingItemData.recureOn;
+                this.editingItem = false;
             }
         }
     });

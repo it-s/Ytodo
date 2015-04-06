@@ -15,7 +15,7 @@
   <link rel="stylesheet" href="style.css">
 </head>
 
-<body v-on="keyup:activate | key 78">
+<body>
     
 <script type="text/x-template" id="template-todo-item">
 <tr id="item{{id}}">
@@ -23,7 +23,7 @@
     <i class="fa" v-class="fa-circle-o: isQued,fa-circle: isDoing,fa-exclamation-circle: isPastDue,fa-chevron-circle-down: isDone" v-on="click:markDo"></i>
   </td>
   <td class="text clickable" v-on="click:$parent.onEditItemClicked($data)" v-class="itemDue: isDue">
-    {{content}}<i class="badge" v-show="more">...</i> 
+    {{content}} <i class="badge" v-show="more">...</i> 
     <i class="fa fa-clock-o badge" v-show="hasDueOn"></i>
     <i class="fa fa-refresh badge" v-show="recureOn>0"></i>
   </td>
@@ -40,7 +40,7 @@
 
   <div id="toDoList" class="pure-g">
     <header class="pure-u-1 box">
-      <h1><i class="fa fa-bars"></i> {{title | uppercase}}: {{doingItems}}</h1>
+      <h1><i class="fa fa-bars"></i> DOING: {{doingItems}}</h1>
       <p>{{doneItems}} completed, {{remainingItems}} remain</p>
     </header>
     <section class="pure-u-1 box doing">
@@ -60,31 +60,31 @@
     </section>
     <div class="affixed clickable addButton" v-on="click:onNewItemClicked"><i class="fa fa-plus"></i>
     </div>
-    <div class="pure-u-1 overlay {{active ? 'active' : ''}}">
+    <div class="pure-u-1 overlay {{newItem ? 'active' : ''}}">
       <div class="callout positioned l-box">
         <div class="pure-form pure-form-stacked">
           <fieldset>
             <legend>Press enter to add the new to-do item, or esc to cancel</legend>
-            <input class="pure-input-1" type="text" v-model="newItemValue" v-on="keyup:newItem | key enter, keyup:cancel | key esc" placeholder="Add new to-do item..." />
+            <input class="pure-input-1" type="text" v-model="newItemData" v-on="keyup:newItem | key enter, keyup:cancel | key esc" placeholder="Add new to-do item..." />
             <div class="button-group">
-              <button class="pure-button pure-button-flat" v-on="click:onNewItemCancelled">Cancel</button>
-              <button class="pure-button pure-button-primary" v-on="click:createNewItem">Add</button>
+              <button class="pure-button pure-button-flat" v-on="click:newItem=false">Cancel</button>
+              <button class="pure-button pure-button-primary" v-on="click:onAddItemClicked">Add</button>
             </div>
           </fieldset>
         </div>
       </div>
     </div>
-    <div class="pure-u-1 overlay {{editing ? 'active' : ''}}">
+    <div class="pure-u-1 overlay {{editingItem ? 'active' : ''}}">
       <div class="modal positioned l-box">
         <div class="pure-form pure-form-stacked">
           <fieldset>
-            <input id="itemContent" class="pure-input-1" type="text" placeholder="To-do item" v-model="editedItemData.content" />
-            <textarea id="itemMore" class="pure-input-1" placeholder="Details..." rows="4" v-model="editedItemData.more"></textarea>
+            <input id="itemContent" class="pure-input-1" type="text" placeholder="To-do item" v-model="editingItemData.content" />
+            <textarea id="itemMore" class="pure-input-1" placeholder="Details..." rows="4" v-model="editingItemData.more"></textarea>
             <label>Due date:
-              <input id="itemDue" class="pure-input-1" type="date" v-model="editedItemData.dueOn" />
+              <input id="itemDue" class="pure-input-1" type="date" v-model="editingItemData.dueOn" />
             </label>
             <label>Recure:
-              <select id="itemRecure" class="pure-input-1" v-model="editedItemData.recureOn">
+              <select id="itemRecure" class="pure-input-1" v-model="editingItemData.recureOn">
                 <option value="0">Never</option>
                 <option value="1">Daily</option>
                 <option value="2">Weekly</option>
@@ -92,7 +92,7 @@
                 <option value="4">Anually</option>
               </select>{{selected}}</label>
             <div class="button-group">
-              <button class="pure-button pure-button-flat" v-on="click:editing=false">Cancel</button>
+              <button class="pure-button pure-button-flat" v-on="click:editingItem=false">Cancel</button>
               <button class="pure-button pure-button-primary" v-on="click:onUpdateItemClicked">Update</button>
             </div>
           </fieldset>
