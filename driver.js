@@ -18,6 +18,17 @@
         this.recureOn = 0;
         this.tags = [];
     };
+    
+    function loadLocalData() {
+        var keys = ['addedOn','dueOn','doneOn'];
+        var data = LocalDrive.fetch(STORAGE_KEY);
+        data.forEach(function(item){
+            keys.forEach(function(key){
+                if(item.hasOwnProperty(key) && item[key] !== null) item[key] = moment(item[key]);
+            });
+        });
+        return data;
+    }
 
     function refreshDueDates(instance) {
         var now = moment(),
@@ -173,7 +184,7 @@
             }
         },
         ready: function () {
-            if (LocalDrive) this.todos = LocalDrive.fetch(STORAGE_KEY);
+            if (LocalDrive) this.todos = loadLocalData();
             this.$watch('todos', function (todos) {
                 if (LocalDrive) LocalDrive.save(STORAGE_KEY, todos);
             }, true);
