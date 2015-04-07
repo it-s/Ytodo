@@ -161,7 +161,7 @@
                         sortOrder: 1
                     },
                     archived: {
-                        show: true,
+                        show: false,
                         sortBy: "doneOn",
                         sortOrder: 1
                     }
@@ -174,21 +174,21 @@
         filters: {
             todosQued: function (todos) {
                 return todos.filter(function (todo) {
-                    return !todo.done && !todo.doing
+                    return !todo.archived && !todo.doing && !todo.done
                 }).sort(function (a, b) {
-                    return a.priority < b.priority;
+                    return Number(a.priority) < Number(b.priority);
                 });
             },
             todosDoing: function (todos) {
                 return todos.filter(function (todo) {
-                    return todo.doing && !todo.done
+                    return !todo.archived && todo.doing && !todo.done
                 }).sort(function (a, b) {
-                    return a.priority < b.priority;
+                    return Number(a.priority) < Number(b.priority);
                 });
             },
             todosDone: function (todos) {
                 return todos.filter(function (todo) {
-                    return todo.done && !todo.archived
+                    return !todo.archived && !todo.doing && todo.done
                 }).sort(function (a, b) {
                     return a.doneOn < b.doneOn;
                 });

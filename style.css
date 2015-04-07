@@ -27,29 +27,25 @@ body{color: #666; font-size: 18px; background-color: #eee;
 */
 .checkbox:hover{color:#000}
 
-header,
-.doing{
+#toDoList header,
+#toDoList section.doing{
 	background-color: #ffff00;
 	border-bottom: 1px solid #fff000;
 }
-.qued{
+.#toDoList sectionqued{
 	background-color: #fff;
 	border-bottom: 1px solid #ddd;
 }
-.done{color: #999; margin-bottom: 4em}
+#toDoList section.done{color: #999; margin-bottom: 4em}
 
-header>h1{
+#toDoList header>h1{
   font-size: 1.5em;
   margin-bottom: 0;
 }
-header>p{
+#toDoList header>p{
   font-size: 0.8em;
   margin-top: 0;
   color: #999;
-}
-
-footer {
-	background-color: #ccc
 }
 
 .list {
@@ -123,22 +119,6 @@ footer {
 }
 .overlay.active{display:block}
 
-.callout{
-  bottom: 82px;
-  width: 100%;
-  background: #fff;
-}
-.callout:after {
-  content: " ";
-  position: absolute;
-	width: 0; 
-	height: 0; 
-	border-left: 20px solid transparent;
-	border-right: 20px solid transparent;	
-	border-top: 20px solid #fff;
-  top: 100%;
-  right: 30px;
-}
 .button-group {
   text-align: right
 }
@@ -169,9 +149,30 @@ footer {
 }
 
 .modal {
+/*
   width: 100%;
     top: 10%;
+*/
     background: #fff
+}
+/*
+
+.callout{
+  bottom: 82px;
+  width: 100%;
+  background: #fff;
+}
+*/
+.callout:after {
+  content: " ";
+  position: absolute;
+	width: 0; 
+	height: 0; 
+	border-left: 20px solid transparent;
+	border-right: 20px solid transparent;	
+	border-top: 20px solid #fff;
+  top: 100%;
+  right: 30px;
 }
 
 .badge {

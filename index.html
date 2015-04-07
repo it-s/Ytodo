@@ -61,7 +61,7 @@
     <div class="affixed clickable addButton" v-on="click:onNewItemClicked"><i class="fa fa-plus"></i>
     </div>
     <div class="pure-u-1 overlay {{newItem ? 'active' : ''}}">
-      <div class="callout positioned l-box">
+      <div class="modal callout positioned l-box" style="width:100%;bottom:82px">
         <div class="pure-form pure-form-stacked">
           <fieldset>
             <legend>Press enter to add the new to-do item, or esc to cancel</legend>
@@ -75,7 +75,7 @@
       </div>
     </div>
     <div class="pure-u-1 overlay {{editingItem ? 'active' : ''}}">
-      <div class="modal positioned l-box">
+      <div class="modal positioned l-box" style="width:100%;top:10%">
         <div class="pure-form pure-form-stacked">
           <fieldset>
             <input id="itemContent" class="pure-input-1" type="text" placeholder="To-do item" v-model="editingItemData.content" />
@@ -100,8 +100,12 @@
       </div>
     </div>
   </div>
-  <div class="pure-u-1 overlay">
-      <div class="modal positioned l-box"></div>
+  <div class="pure-u-1 overlay active">
+      <div class="modal positioned l-box" style="width:80%;height:100%">
+            <header class="pure-u-1">
+              <h1><i class="fa fa-bars"></i> Y-TODO</h1>
+            </header>
+      </div>
   </div>
 
   <script type="text/javascript" src="lib/moment.min.js"></script>
