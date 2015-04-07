@@ -1,5 +1,6 @@
 /*global Vue, todoStorage */
 (function (exports) {
+    'use strict';
 
     var STORAGE_KEY = 'debug-todo-store';
 //    var STORAGE_MODEL = [{field:"id",type:"integer"},{field:"content",type:"string"},{field:"more",type:"string"},{field:"doing",type:"bool"},{field:"done",type:"bool"},{field:"archived",type:"bool"},{field:"priority",type:"integer"},{field:"addedOn",type:"date"},{field:"dueOn",type:"date"},{field:"doneOn",type:"date"},{field:"recureOn",type:"integer"},{field:"tags",type:"array"}];
@@ -102,19 +103,18 @@
             markDo: function (e) {
                 e.cancelBubble = true;
                 if (this.archived) return;
-                if (!this.doing && !this.done) {
+                if (this.isQued) {
                     this.doing = true;
                     this.done = false;
-                } else if (this.doing && !this.done) {
+                } else if (this.isDoing) {
                     this.doneOn = moment();
                     this.doing = false;
                     if (this.recureOn == 0) this.done = true;
                     else {
                         this.dueOn = computeNextDueDate(this.dueOn, this.recureOn);
                     }
-                } else if (!this.doing && this.done) {
+                } else if (this.isDone) {
                     this.doneOn = null;
-                    this.archived = false;
                     this.doing = false;
                     this.done = false;
                 }
