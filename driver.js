@@ -58,7 +58,7 @@
         var now = moment(),
             next = moment(),
             timeout = 0;
-        next.add(1, 'day');
+        next.add(1, 'hour');
         timeout = next - now;
 
         instance.todos.forEach(function (item) {
@@ -66,7 +66,7 @@
                 !item.done 
                 && !item.doing
                 && item.dueOn != null
-                && item.dueOn.isBefore(moment(), 'day')
+                && item.dueOn.isBefore(moment())
                ) item.doing = true;
             else if (
                 item.done
@@ -116,7 +116,7 @@
                 return this.done && !this.archived;
             },
             isDue: function () {
-                if (this.dueOn == null) return false;
+                if (this.dueOn == null || this.done || this.archived) return false;
                 return this.dueOn.isBefore(moment());
             },
             isPastDue: function () {
