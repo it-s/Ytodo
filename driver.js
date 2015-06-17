@@ -116,7 +116,7 @@
                 return this.done && !this.archived;
             },
             isDue: function () {
-                if (this.dueOn == null) return false;
+                if (this.dueOn == null || this.done || this.archived) return false;
                 return this.dueOn.isBefore(moment());
             },
             isPastDue: function () {
