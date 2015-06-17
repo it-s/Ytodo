@@ -2,7 +2,10 @@
 (function (exports) {
     'use strict';
 
-    var STORAGE_KEY = 'debug-todo-store';
+    var STORAGE_KEY = '-todo-store';
+    var STORAGE_STORE = 'debug';
+    var ARCHIVE_AFTER = "month";
+    
 //    var STORAGE_MODEL = [{field:"id",type:"integer"},{field:"content",type:"string"},{field:"more",type:"string"},{field:"doing",type:"bool"},{field:"done",type:"bool"},{field:"archived",type:"bool"},{field:"priority",type:"integer"},{field:"addedOn",type:"date"},{field:"dueOn",type:"date"},{field:"doneOn",type:"date"},{field:"recureOn",type:"integer"},{field:"tags",type:"array"}];
 
     var ToDo = function (id, content) {
@@ -20,26 +23,56 @@
         this.tags = [];
     };
     
+    function getUrlVars() {
+        var vars = [], hash;
+        var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+        for(var i = 0; i < hashes.length; i++) {
+          hash = hashes[i].split('=');
+          vars.push(hash[0]);
+          vars[hash[0]] = hash[1];
+        }
+      return vars;
+      }
+ 
+    
+    function getStorageKey(){
+        return STORAGE_STORE.replace(/[&\/\\#,+()$~%.'":*?<>{}]/g,'-').toLowerCase() + STORAGE_KEY;
+    }
+    
     function loadLocalData() {
-        var keys = ['addedOn','dueOn','doneOn'];
-        var data = LocalDrive.fetch(STORAGE_KEY);
-        data.forEach(function(item){
-            keys.forEach(function(key){
-                if(item.hasOwnProperty(key) && item[key] !== null) item[key] = moment(item[key]);
+        var vars = getUrlVars();
+        if (vars.hasOwnProperty('store')){
+            STORAGE_STORE = vars.store;
+            var keys = ['addedOn','dueOn','doneOn'];
+            var data = LocalDrive.fetch(getStorageKey());
+            data.forEach(function(item){
+                keys.forEach(function(key){
+                    if(item.hasOwnProperty(key) && item[key] !== null) item[key] = moment(item[key]);
+                });
             });
-        });
-        return data;
+            return data;
+        }
     }
 
     function refreshDueDates(instance) {
         var now = moment(),
             next = moment(),
             timeout = 0;
-        next.add(1, 'd');
+        next.add(1, 'day');
         timeout = next - now;
 
         instance.todos.forEach(function (item) {
-            if (item.isDue && !item.doing) item.doing = true;
+            if (
+                !item.done 
+                && !item.doing
+                && item.dueOn != null
+                && item.dueOn.isBefore(moment(), 'day')
+               ) item.doing = true;
+            else if (
+                item.done
+                && !item.archived
+                && item.addedOn.isAfter(moment(), ARCHIVE_AFTER)
+                ) item.archived = true;
         });
 
         setTimeout(function () {
@@ -89,6 +122,9 @@
             isPastDue: function () {
                 if (this.dueOn == null) return false;
                 return this.dueOn.isBefore(moment(),"day");
+            },
+            isArchived: function () {
+                return this.archived;
             }
         },
         methods: {
@@ -204,7 +240,7 @@
         ready: function () {
             if (LocalDrive) this.todos = loadLocalData();
             this.$watch('todos', function (todos) {
-                if (LocalDrive) LocalDrive.save(STORAGE_KEY, todos);
+                if (LocalDrive) LocalDrive.save(getStorageKey(), todos);
             }, true);
             refreshDueDates(this);
         },
