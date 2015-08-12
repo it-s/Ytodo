@@ -50,7 +50,7 @@
                     if(item.hasOwnProperty(key) && item[key] !== null) item[key] = moment(item[key]);
                 });
             });
-            return data;
+            return data || [];
         //}
     }
 
