@@ -104,6 +104,10 @@
         template: '#template-todo-item',
         replace: 'true',
         computed: {
+			index: function () {
+				var list = this.$parent.$data.todos;
+				return list.indexOf(this.$data);
+			},
             hasDueOn: function () {
                 return this.dueOn != null && this.recureOn == 0;
             },
@@ -162,14 +166,15 @@
             },
             remove: function (e) {
                 e.cancelBubble = true;
-                this.$parent.$data.todos.$remove(this.$index);
+                this.$parent.$data.todos.$remove(this.index);
             }
         }
     });
-
+	
     var ToDos = new Vue({
         el: '#toDoList',
         data: {
+			showMenu: false;
             newItem: false,
             newItemData: "",
             editingItem: false,
@@ -281,12 +286,14 @@
             },
             onAddItemClicked: function () {
                 var value = this.newItemData && this.newItemData.trim();
-                if (value)
-                    this.todos.unshift(new ToDo(this.todos.length, value));
-                this.newItemData = '';
-                this.newItem = false;
                 this.$event.cancelBubble = true;
                 this.$event.returnValue = false;
+                if (value)
+                    this.todos.unshift(new ToDo(this.todos.length, value));
+				else 
+					return false;
+                this.newItemData = '';
+                this.newItem = false;
             },
             onEditItemClicked: function (item) {
                 this.editingItemData.index = this.$data.todos.lastIndexOf(item);
