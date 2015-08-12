@@ -21,10 +21,10 @@ body{color: #666; font-size: 18px; background-color: #999;
   box-sizing: border-box;}
 .clickable,
 .checkbox {cursor: pointer;transform: scale(1,1)}
-/*
+
 .checkbox:active,
 .clickable:active{;transform: scale(0.8,0.8)}
-*/
+
 .checkbox:hover{color:#000}
 
 #page{
@@ -124,9 +124,7 @@ body{color: #666; font-size: 18px; background-color: #999;
   left: 0;
   background: rgba(0,0,0,0.6);
   z-index: 2;
-    display:none
 }
-.overlay.active{display:block}
 
 .button-group {
   text-align: right
@@ -196,4 +194,44 @@ body{color: #666; font-size: 18px; background-color: #999;
 	display: block;
 	text-align: center;
 	opacity: 0.5;
+}
+/*Dialogues*/
+#newItemDialog {
+	width:100%;
+	bottom:82px;
+	transition: bottom 0.3s;
+}
+/*.overlay.fade-enter>#newItemDialog {
+	bottom: 0px;
+}
+.overlay.fade-leave>#newItemDialog {
+	bottom:0px;
+}*/
+
+#editItemDialog {
+	width:100%;top:10%;
+}
+
+/* Transitions */
+.fade-enter {
+  animation: fade-in .3s;
+}
+.fade-leave {
+  animation: fade-out .3s;
+}
+@keyframes fade-in {
+  0% {
+	opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+@keyframes fade-out {
+  0% {
+    opacity: 1;
+  }
+  100% {
+	opacity: 0;
+  }
 }
