@@ -41,8 +41,8 @@
     
     function loadLocalData() {
         var vars = getUrlVars();
-        if (vars.hasOwnProperty('store')){
-            STORAGE_STORE = vars.store;
+        //if (vars.hasOwnProperty('store')){
+            STORAGE_STORE = vars["store"] || "YTODO";
             var keys = ['addedOn','dueOn','doneOn'];
             var data = LocalDrive.fetch(getStorageKey());
             data.forEach(function(item){
@@ -50,8 +50,8 @@
                     if(item.hasOwnProperty(key) && item[key] !== null) item[key] = moment(item[key]);
                 });
             });
-            return data;
-        }
+            return data || [];
+        //}
     }
 
     function refreshDueDates(instance) {
