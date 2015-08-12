@@ -1,0 +1,19 @@
+CACHE MANIFEST
+
+# Time: Wed Aug 12 2015 22:28:51 GMT+0000 (UTC)
+
+CACHE:
+http://it-s.github.io/Ytodo/
+http://yui.yahooapis.com/pure/0.5.0/pure-min.css
+http://yui.yahooapis.com/pure/0.5.0/grids-responsive-min.css
+http://it-s.github.io/Ytodo/lib/moment.min.js
+http://it-s.github.io/Ytodo/lib/vue.min.js
+http://fonts.googleapis.com/css?family=Roboto+Condensed:300
+http://netdna.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.css
+http://netdna.bootstrapcdn.com/font-awesome/4.3.0/fonts/fontawesome-webfont.woff?v=4.3.0
+http://it-s.github.io/Ytodo/style.css
+http://it-s.github.io/Ytodo/storage.js
+http://it-s.github.io/Ytodo/driver.js
+
+NETWORK:
+*

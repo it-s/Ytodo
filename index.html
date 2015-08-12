@@ -1,11 +1,12 @@
 <!doctype html>
-<html>
+<html manifest="manifest.appcache">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1.0">
   <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="#ffff00">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Y-TODO list</title>
 
   <link rel="icon" type="image/png" href="icon.png" />
@@ -23,14 +24,14 @@
 </head>
 
 <body>
-    
+
 <script type="text/x-template" id="template-todo-item">
 <tr id="item{{id}}" v-transition="fade">
   <td class="checkbox">
     <i class="fa" v-class="fa-circle-o: isQued,fa-circle: isDoing&&!isPastDue,fa-exclamation-circle: isPastDue,fa-chevron-circle-down: isDone" v-on="click:markDo"></i>
   </td>
   <td class="text clickable" v-on="click:$parent.onEditItemClicked($data)" v-class="itemDue: isDue">
-    {{content}} <i class="badge" v-show="more">...</i> 
+    {{content}} <i class="badge" v-show="more">...</i>
     <i class="fa fa-clock-o badge" v-show="hasDueOn"></i>
     <i class="fa fa-refresh badge" v-show="recureOn>0"></i>
   </td>
