@@ -52,11 +52,13 @@
       <p>{{doneItems}} completed, {{remainingItems}} remain</p>
     </header>
     <section class="pure-u-1 box doing">
+	  <!--small class="empty-list-notice" v-show="doingItems == 0">No active tasks</small-->
       <table class="list">
         <tr v-repeat="todos | todosDoing" v-component="todo-item"></tr>
       </table>
     </section>
     <section class="pure-u-1 box qued">
+	  <p class="empty-list-notice" v-show="remainingItems == 0">No tasks in que.<br/>Use <i class="fa fa-plus"></i> button to add one.</p>
       <table class="list">
         <tr v-repeat="todos | todosQued" v-component="todo-item"></tr>
       </table>
