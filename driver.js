@@ -60,7 +60,8 @@
             timeout = 0;
         next.add(1, 'hour');
         timeout = next - now;
-
+		
+		//Automatically promote tasks that are due
         instance.todos.forEach(function (item) {
             if (
                 !item.done 
@@ -161,7 +162,7 @@
             },
             remove: function (e) {
                 e.cancelBubble = true;
-                this.$remove();
+                this.$parent.$data.todos.$remove(this.$index);
             }
         }
     });

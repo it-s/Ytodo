@@ -191,3 +191,9 @@ body{color: #666; font-size: 18px; background-color: #999;
 .itemDue {
     color: #f00f40;
 }
+.empty-list-notice {
+	font-size: 120%;
+	display: block;
+	text-align: center;
+	opacity: 0.5;
+}
