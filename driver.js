@@ -161,7 +161,7 @@
             },
             remove: function (e) {
                 e.cancelBubble = true;
-                this.$parent.$remove(this.$data);
+                this.$parent.$remove(this.$index);
             }
         }
     });
