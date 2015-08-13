@@ -160,7 +160,8 @@ body{color: #666; font-size: 18px; background-color: #999;
   width: 100%;
     top: 10%;
 */
-    background: #fff
+  width: 100%;
+  background: #fff
 }
 /*
 
@@ -173,10 +174,10 @@ body{color: #666; font-size: 18px; background-color: #999;
 .callout:after {
   content: " ";
   position: absolute;
-	width: 0; 
-	height: 0; 
+	width: 0;
+	height: 0;
 	border-left: 20px solid transparent;
-	border-right: 20px solid transparent;	
+	border-right: 20px solid transparent;
 	border-top: 20px solid #fff;
   top: 100%;
   right: 30px;
@@ -196,8 +197,7 @@ body{color: #666; font-size: 18px; background-color: #999;
 	opacity: 0.5;
 }
 /*Dialogues*/
-#newItemDialog {
-	width:100%;
+#newItemDialog .modal {
 	bottom:82px;
 	transition: bottom 0.3s;
 }
@@ -208,8 +208,8 @@ body{color: #666; font-size: 18px; background-color: #999;
 	bottom:0px;
 }*/
 
-#editItemDialog {
-	width:100%;top:10%;
+#editItemDialog .modal{
+	top:10%;
 }
 
 /* Transitions */

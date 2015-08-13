@@ -92,6 +92,24 @@
 </head>
 
 <body>
+<script type="text/x-template" id="template-dialog">
+<div class="pure-u-1 overlay" v-show="shown" v-on="click: dismiss" v-transition="fade">
+  <div class="modal callout positioned l-box" v-on="click: block">
+    <div class="pure-form pure-form-stacked">
+      <h2 v-show="title.length">{{title}}</h2>
+      <fieldset>
+        <content>
+          Modal
+        </content>
+        <div class="button-group">
+            <button class="pure-button pure-button-flat" v-show="buttonsObj.cancel" v-on="click: dismiss">Cancel</button>
+            <button class="pure-button pure-button-primary" v-show="buttonsObj.ok" v-on="click: accept">OK</button>
+        </div>
+      </fieldset>
+    </div>
+  </div>
+</div>
+</script>
 
 <script type="text/x-template" id="template-todo-item">
 <tr id="item{{id}}" v-transition="fade">
@@ -140,53 +158,30 @@
     <div class="affixed clickable addButton" v-on="click:onNewItemClicked">
         <i class="fa fa-plus"></i>
     </div>
-    <div class="pure-u-1 overlay" v-show="newItem" v-transition="fade">
-      <div id="newItemDialog" class="modal callout positioned l-box" v-transition="slide">
-        <div class="pure-form pure-form-stacked">
-          <fieldset>
-            <legend>Press enter to add the new to-do item, or esc to cancel</legend>
-            <input class="pure-input-1" type="text" v-model="newItemData" v-on="keyup:newItem | key enter, keyup:cancel | key esc" placeholder="Add new to-do item..." />
-            <div class="button-group">
-              <button class="pure-button pure-button-flat" v-on="click:newItem=false">Cancel</button>
-              <button class="pure-button pure-button-primary" v-on="click:onAddItemClicked">Add</button>
-            </div>
-          </fieldset>
-        </div>
-      </div>
+
+    <dialog id="newItemDialog" buttons="ok: 'Add'" on-accept={{validateItem}} on-accepted="{{addNewItem}}">
+      <script type="text/x-template">
+        <legend>Press enter to add the new to-do item, or esc to cancel</legend>
+        <input class="pure-input-1" type="text" v-model="data.content" placeholder="Add new to-do item..." />
+      </script>
+    </dialog>
+    <dialog id="editItemDialog"  buttons="ok: 'Update'" on-accept={{validateItem}} on-accepted="{{updateItem}}">
+      <script type="text/x-template">
+        <input id="itemContent" class="pure-input-1" type="text" placeholder="To-do item" v-model="data.content" />
+        <textarea id="itemMore" class="pure-input-1" placeholder="Details..." rows="4" v-model="data.more"></textarea>
+        <label>Due date:
+          <input id="itemDue" class="pure-input-1" type="date" v-model="data.dueOn" />
+        </label>
+        <label>Recure:
+        <select id="itemRecure" class="pure-input-1" v-model="data.recureOn">
+          <option value="0">Never</option>
+          <option value="1">Daily</option>
+          <option value="2">Weekly</option>
+          <option value="3">Monthly</option>
+          <option value="4">Anually</option>
+        </select>{{selected}}</label>
+      </script>
     </div>
-    <div class="pure-u-1 overlay" v-show="editingItem" v-transition="fade">
-      <div id="editItemDialog" class="modal positioned l-box">
-        <div class="pure-form pure-form-stacked">
-          <fieldset>
-            <input id="itemContent" class="pure-input-1" type="text" placeholder="To-do item" v-model="editingItemData.content" />
-            <textarea id="itemMore" class="pure-input-1" placeholder="Details..." rows="4" v-model="editingItemData.more"></textarea>
-            <label>Due date:
-              <input id="itemDue" class="pure-input-1" type="date" v-model="editingItemData.dueOn" />
-            </label>
-            <label>Recure:
-              <select id="itemRecure" class="pure-input-1" v-model="editingItemData.recureOn">
-                <option value="0">Never</option>
-                <option value="1">Daily</option>
-                <option value="2">Weekly</option>
-                <option value="3">Monthly</option>
-                <option value="4">Anually</option>
-              </select>{{selected}}</label>
-            <div class="button-group">
-              <button class="pure-button pure-button-flat" v-on="click:editingItem=false">Cancel</button>
-              <button class="pure-button pure-button-primary" v-on="click:onUpdateItemClicked">Update</button>
-            </div>
-          </fieldset>
-        </div>
-      </div>
-    </div>
-  </div>
-  <!--div class="pure-u-1 overlay">
-      <div class="modal positioned l-box" style="width:80%;height:100%">
-            <header class="pure-u-1">
-              <h1><i class="fa fa-bars"></i> Y-TODO</h1>
-            </header>
-      </div>
-  </div-->
 </div>
   <script type="text/javascript" src="lib/moment.min.js"></script>
   <script type="text/javascript" src="lib/vue.min.js"></script>

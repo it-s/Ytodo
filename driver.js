@@ -23,6 +23,24 @@
     this.tags = [];
   };
 
+  function prependNodes(node, nodes) {
+    for (var i = 0, n = nodes.length; i < n; i++) {
+      if (nodes[i])
+        node.parentNode.insertBefore(nodes[i], node);
+    }
+  }
+
+  function isFunction(o) {
+    return typeof(o) === "function"
+  }
+
+  function extend(a, b) {
+    for (var key in b) {
+      a[key] = b[key];
+    }
+    return a;
+  }
+
   function getUrlVars() {
     var vars = [],
       hash;
@@ -93,6 +111,100 @@
     }
     return dueDate;
   }
+
+  Vue.component('dialog', {
+    template: '#template-dialog',
+    replace: 'true',
+    data: function() {
+      return {
+        data: {},
+        shown: false,
+        buttonsObj: {
+          ok: false,
+          cancel: "Cancel"
+        }
+      }
+    },
+    props: [
+      "onShow",
+      "onShown",
+      "onDismiss",
+      "onDismissed",
+      "onAccept",
+      "onAccepted", {
+        type: String,
+        name: 'title',
+        default: function() {
+          return "";
+        }
+      }, {
+        type: String,
+        name: 'buttons',
+        default: function() {
+          return {
+            ok: false,
+            cancel: "Cancel"
+          };
+        }
+      }
+    ],
+    methods: {
+      id: function(suffix) {
+        return (this.$el["id"] || "modalDialog") + (suffix ? "-" + suffix : "");
+      },
+      show: function(data) {
+        var self = this;
+        if (isFunction(this["onShow"]))
+          this.onShow();
+        this.$data.data = data;
+        this.$data.shown = true;
+        setTimeout(function() {
+          self.$el.getElementsByTagName('input')[0].focus();
+          if (isFunction(self["onShown"]))
+            self.onShown();
+        }, 100);
+      },
+      block: function(e) {
+        e.stopPropagation();
+      },
+      hide: function() {
+        if (!isFunction(this["onDismiss"]) || this.onDismiss()) {
+          this.$data.shown = false;
+          if (isFunction(this["onDismissed"]))
+            this.onDismissed();
+        }
+      },
+      accept: function() {
+        //this.$dispatch(this.id('accepted'), this.data);
+        if (!isFunction(this["onAccept"]) || this.onAccept(this.$data.data)) {
+          if (isFunction(this["onAccepted"]))
+            this.onAccepted(this.$data.data);
+          this.hide();
+        }
+      },
+      dismiss: function() {
+        // this.$dispatch(this.id('dismissed'));
+        this.hide();
+      }
+    },
+    ready: function() {
+      var buttons, parser, parent, template, el;
+      template = this.$el.getElementsByTagName('script')[0];
+      parent = template.parentNode;
+      parser = new DOMParser();
+      el = parser.parseFromString(template.innerText, "text/html");
+      this.$compile(el);
+      prependNodes(template, el.body.childNodes);
+      parent.insertBefore(el.body, template);
+      //template.parentNode.replaceChild(template, el.body);
+      //var el = parser.parseFromString(template.innerText , "text/html")
+      eval("buttons = {" + this.buttons.replace("=", ":") + "}");
+      extend(this.$data.buttonsObj, buttons);
+      this.$on(this.id('show'), function(data) {
+        this.show(data);
+      });
+    }
+  });
 
   Vue.component('todo-item', {
     template: '#template-todo-item',
@@ -237,13 +349,6 @@
         });
       }
     },
-    ready: function() {
-      if (LocalDrive) this.todos = loadLocalData();
-      this.$watch('todos', function(todos) {
-        if (LocalDrive) LocalDrive.save(getStorageKey(), todos);
-      }, true);
-      refreshDueDates(this);
-    },
     computed: {
       totalItems: function() {
         return this.todos.length;
@@ -270,41 +375,41 @@
       }
     },
     methods: {
-      onNewItemClicked: function() {
-        var el = this.$el;
-        this.newItemData = '';
-        this.newItem = true;
-        setTimeout(function() {
-          el.getElementsByTagName('input')[0].focus();
-        }, 100);
+      validateItem: function(data) {
+        return (data['content'] != undefined) && (typeof(data['content']) === "string") && (data.content.trim()
+          .length > 0);
       },
-      onAddItemClicked: function() {
-        var value = this.newItemData && this.newItemData.trim();
-        this.$event.cancelBubble = true;
-        this.$event.returnValue = false;
-        if (value)
-          this.todos.unshift(new ToDo(this.todos.length, value));
-        else
-          return false;
-        this.newItemData = '';
-        this.newItem = false;
+      addNewItem: function(data) {
+        this.todos.unshift(data);
+      },
+      updateItem: function(data) {
+        var item = this.$data.todos[data.index];
+        item.content = data.content;
+        item.more = data.more;
+        item.dueOn = data.dueOn == "" ? null : moment(data.dueOn);
+        item.recureOn = data.recureOn;
+      },
+      onNewItemClicked: function() {
+        this.$broadcast("newItemDialog-show", new ToDo(this.todos.length));
       },
       onEditItemClicked: function(item) {
-        this.editingItemData.index = this.$data.todos.lastIndexOf(item);
-        this.editingItemData.content = item.content;
-        this.editingItemData.more = item.more || "";
-        this.editingItemData.dueOn = item.dueOn ? item.dueOn.format("YYYY-MM-DD") : "";
-        this.editingItemData.recureOn = item.recureOn || 0;
-        this.editingItem = true;
+        var temp = {
+          index: this.$data.todos.lastIndexOf(item),
+          content: item.content,
+          more: item.more || "",
+          dueOn: item.dueOn ? item.dueOn.format("YYYY-MM-DD") : "",
+          recureOn: item.recureOn || 0
+        }
+        this.$broadcast("editItemDialog-show", temp);
       },
-      onUpdateItemClicked: function() {
-        var item = this.$data.todos[this.editingItemData.index];
-        item.content = this.editingItemData.content;
-        item.more = this.editingItemData.more;
-        item.dueOn = this.editingItemData.dueOn == "" ? null : moment(this.editingItemData.dueOn);
-        item.recureOn = this.editingItemData.recureOn;
-        this.editingItem = false;
-      }
+    },
+    //Application entry point
+    ready: function() {
+      if (LocalDrive) this.todos = loadLocalData();
+      this.$watch('todos', function(todos) {
+        if (LocalDrive) LocalDrive.save(getStorageKey(), todos);
+      }, true);
+      refreshDueDates(this);
     }
   });
 })(window);
