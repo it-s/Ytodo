@@ -389,7 +389,7 @@
         item.dueOn = data.dueOn == "" ? null : moment(data.dueOn);
         item.recureOn = data.recureOn;
       },
-      onNewItemClicked: function() {
+      onAddButtonClicked: function() {
         this.$broadcast("newItemDialog-show", new ToDo(this.todos.length));
       },
       onEditItemClicked: function(item) {

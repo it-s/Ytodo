@@ -102,8 +102,8 @@
           Modal
         </content>
         <div class="button-group">
-            <button class="pure-button pure-button-flat" v-show="buttonsObj.cancel" v-on="click: dismiss">Cancel</button>
-            <button class="pure-button pure-button-primary" v-show="buttonsObj.ok" v-on="click: accept">OK</button>
+            <button class="pure-button pure-button-flat" v-show="buttonsObj.cancel" v-on="click: dismiss">{{buttonsObj.cancel}}</button>
+            <button class="pure-button pure-button-primary" v-show="buttonsObj.ok" v-on="click: accept">{{buttonsObj.ok}}</button>
         </div>
       </fieldset>
     </div>
@@ -155,7 +155,8 @@
         <tr v-repeat="todos | todosDone" v-component="todo-item"></tr>
       </table>
     </section>
-    <div class="affixed clickable addButton" v-on="click:onNewItemClicked">
+
+    <div class="affixed clickable addButton" v-on="click:onAddButtonClicked">
         <i class="fa fa-plus"></i>
     </div>
 
@@ -181,8 +182,10 @@
           <option value="4">Anually</option>
         </select>{{selected}}</label>
       </script>
-    </div>
+    </dialog>
+  </div>
 </div>
+
   <script type="text/javascript" src="lib/moment.min.js"></script>
   <script type="text/javascript" src="lib/vue.min.js"></script>
   <script type="text/javascript" src="storage.js"></script>
