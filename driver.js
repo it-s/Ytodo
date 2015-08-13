@@ -206,6 +206,49 @@
     }
   });
 
+
+  Vue.component('appmenu', {
+    template: '#template-appmenu',
+    replace: 'true',
+    data: function() {
+      return {
+        open: false
+      }
+    },
+    props: [
+      "onShow",
+      "onShown",
+      "onDismiss",
+      "onDismissed"
+    ],
+    methods: {
+      id: function(suffix) {
+        return (this.$el["id"] || "appmenu") + (suffix ? "-" + suffix : "");
+      },
+      show: function() {
+        var self = this;
+        if (isFunction(this["onShow"]))
+          this.onShow();
+        this.$data.open = true;
+      },
+      block: function(e) {
+        e.stopPropagation();
+      },
+      hide: function() {
+        if (!isFunction(this["onDismiss"]) || this.onDismiss()) {
+          this.$data.open = false;
+          if (isFunction(this["onDismissed"]))
+            this.onDismissed();
+        }
+      }
+    },
+    ready: function() {
+      this.$on(this.id('show'), function() {
+        this.show();
+      });
+    }
+  });
+
   Vue.component('todo-item', {
     template: '#template-todo-item',
     replace: 'true',
@@ -388,6 +431,9 @@
         item.more = data.more;
         item.dueOn = data.dueOn == "" ? null : moment(data.dueOn);
         item.recureOn = data.recureOn;
+      },
+      onAppButtonClicked: function() {
+        this.$broadcast("appmenu-show");
       },
       onAddButtonClicked: function() {
         this.$broadcast("newItemDialog-show", new ToDo(this.todos.length));

@@ -46,10 +46,14 @@ body{color: #666; font-size: 18px; background-color: #999;
     color: #999;
     padding-bottom: 4em
 }
-
-#toDoList header>h1{
+.appmenu h1,
+#toDoList header> h1{
   font-size: 1.5em;
   margin-bottom: 0;
+}
+.appmenu h1 {
+    margin-top: 2px;
+    margin-left: -6px;
 }
 #toDoList header>p{
   font-size: 0.8em;
@@ -155,13 +159,14 @@ body{color: #666; font-size: 18px; background-color: #999;
   color: #0078e7
 }
 
+.appmenu,
 .modal {
-/*
-  width: 100%;
-    top: 10%;
-*/
   width: 100%;
   background: #fff
+}
+
+.appmenu {
+  left: 0;
 }
 /*
 
@@ -201,12 +206,6 @@ body{color: #666; font-size: 18px; background-color: #999;
 	bottom:82px;
 	transition: bottom 0.3s;
 }
-/*.overlay.fade-enter>#newItemDialog {
-	bottom: 0px;
-}
-.overlay.fade-leave>#newItemDialog {
-	bottom:0px;
-}*/
 
 #editItemDialog .modal{
 	top:10%;
@@ -233,5 +232,28 @@ body{color: #666; font-size: 18px; background-color: #999;
   }
   100% {
 	opacity: 0;
+  }
+}
+
+.fade-enter > .appmenu {
+  animation: slide-in .3s;
+}
+.fade-leave > .appmenu {
+  animation: slide-out .3s;
+}
+@keyframes slide-in {
+  0% {
+	   left: -100%;
+  }
+  100% {
+	   left: 0;
+  }
+}
+@keyframes slide-out {
+  0% {
+	   left: 0;
+  }
+  100% {
+	   left: -100%;
   }
 }

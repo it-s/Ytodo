@@ -92,6 +92,19 @@
 </head>
 
 <body>
+
+<script type="text/x-template" id="template-appmenu">
+<div class="pure-u-1 overlay" v-show="open" v-on="click: hide" v-transition="fade">
+    <div class="appmenu positioned l-box" style="width:80%;height:100%" v-on="click: block">
+          <section class="pure-u-1">
+            <h1 style="margin-top: 2px;"><a style="display: inline-block;" v-on="click:hide" class="clickable"><i class="fa fa-times"></i></a> Y-TODO</h1>
+          </section>
+          <section class="pure-u-1">
+          </section>
+    </div>
+</div>
+</script>
+
 <script type="text/x-template" id="template-dialog">
 <div class="pure-u-1 overlay" v-show="shown" v-on="click: dismiss" v-transition="fade">
   <div class="modal callout positioned l-box" v-on="click: block">
@@ -135,7 +148,7 @@
 <div id="page">
   <div id="toDoList" class="pure-g">
     <header class="pure-u-1 box">
-      <h1><i class="fa fa-bars"></i> DOING: {{doingItems}}</h1>
+      <h1><a style="display: inline-block;" v-on="click:onAppButtonClicked" class="clickable"><i class="fa fa-bars"></i></a> DOING: {{doingItems}}</h1>
       <p>{{doneItems}} completed, {{remainingItems}} remain</p>
     </header>
     <section class="pure-u-1 box doing">
@@ -183,6 +196,9 @@
         </select>{{selected}}</label>
       </script>
     </dialog>
+
+    <appmenu id="appmenu"></appmenu>
+
   </div>
 </div>
 
