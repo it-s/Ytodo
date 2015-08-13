@@ -51,7 +51,7 @@
   app = new Vue({
     el: '#toDoList',
     data: {
-	  scroll: 0,
+	  //scroll: 0,
       options: {
         sections: {
           doing: {
@@ -163,22 +163,23 @@
         this.$broadcast("newItemDialog-show", new ToDo(this.todos.length));
       },
       onEditItemClicked: function(item) {
-        var temp = {
+        this.$broadcast("editItemDialog-show", {
           index: this.$data.todos.lastIndexOf(item),
           content: item.content,
           more: item.more || "",
           dueOn: item.dueOn ? item.dueOn.format("YYYY-MM-DD") : "",
           recureOn: item.recureOn || 0
-        }
-        this.$broadcast("editItemDialog-show", temp);
+        });
       },
     },
     //Application entry point
     ready: function() {
       if (LocalDrive) this.todos = loadLocalData();
-      this.$watch('todos', function(todos) {
+      this.$watch('todos', function(todos, oldTodos) {
         if (LocalDrive) LocalDrive.save(_.getStorageKey(STORAGE_STORE, STORAGE_KEY), todos);
-      }, true);
+      }, {
+		  deep: true
+		});
       _.refreshDueDates(this);
     }
   });
