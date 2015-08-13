@@ -9,6 +9,10 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Y-TODO</title>
 
+  <script>
+    if (window.location.protocol != "https:")
+        window.location.protocol = "https";
+  </script>
   <link rel="canonical" href="https://it-s.github.io/Ytodo/" />
   <link rel="icon" type="image/png" href="icon.png" />
   <link rel="apple-touch-icon" href="icon.png">
@@ -17,16 +21,14 @@
     <link rel="apple-touch-icon" sizes="152x152" href="touch-icon-ipad-retina.png">
   <link rel="shortcut icon" href="icon.ico" />
 
-  <link href='https://fonts.googleapis.com/css?family=Roboto+Condensed:300' rel='stylesheet' type='text/css'>
+  <link href='//fonts.googleapis.com/css?family=Roboto+Condensed:300' rel='stylesheet' type='text/css'>
   <link href="lib/pure-min.css" rel='stylesheet' type='text/css'>
   <link href="lib/grids-responsive-min.css" rel='stylesheet' type='text/css'>
   <link href="lib/font-awesome.css" rel='stylesheet' type='text/css'>
   <link href="style.css" rel='stylesheet' type='text/css'>
 
-  <script>
-    if (window.location.protocol != "https:")
-        window.location.protocol = "https";
-  </script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/dropbox.js/0.10.2/dropbox.min.js">
+</script>
   <!-- STARTUP IMAGES -->
 
 <!-- iPad retina portrait startup image -->
@@ -135,7 +137,7 @@
   <td class="checkbox">
     <i class="fa" v-class="fa-circle-o: isQued,fa-circle: isDoing&&!isPastDue,fa-exclamation-circle: isPastDue,fa-chevron-circle-down: isDone" v-on="click:markDo"></i>
   </td>
-  <td class="text clickable" v-on="click:$parent.onEditItemClicked($data)" v-class="itemDue: isDue">
+  <td class="text" v-on="click:$parent.onEditItemClicked($data)" v-class="itemDue: isDue">
     {{content}} <i class="badge" v-show="more">...</i>
     <i class="fa fa-clock-o badge" v-show="hasDueOn"></i>
     <i class="fa fa-refresh badge" v-show="recureOn>0"></i>
@@ -151,49 +153,50 @@
 <tr>
 </script>
 
-<div id="page">
-  <div id="toDoList" class="pure-g">
-    <header class="pure-u-1 box">
-      <h1><a style="display: inline-block;" v-on="click:onAppButtonClicked" class="clickable"><i class="fa fa-bars"></i></a> DOING: {{doingItems}}</h1>
-      <p>{{doneItems}} completed, {{remainingItems}} remain</p>
+<div id="toDoList" class="activity enclosure pure-g">
+    <header class="pure-u-1 box" v-class="large: scrollIsAtTop">
+      <h1><a style="display: inline-block;" v-on="click:onAppButtonClicked" class="clickable"><i class="fa fa-bars"></i></a> DOING: <span  v-cloak>{{doingItems}}</span></h1>
+      <p v-cloak>{{doneItems}} completed, {{remainingItems}} remaining</p>
     </header>
-    <section class="pure-u-1 box doing">
-	  <!--small class="empty-list-notice" v-show="doingItems == 0">No active tasks</small-->
-      <table class="list">
-        <tr v-repeat="todos | todosDoing" v-component="todo-item"></tr>
-      </table>
-    </section>
-    <section class="pure-u-1 box qued">
-	  <p class="empty-list-notice" v-show="remainingItems == 0">No tasks in que.<br/>Use <i class="fa fa-plus"></i> button to add one.</p>
-      <table class="list">
-        <tr v-repeat="todos | todosQued" v-component="todo-item"></tr>
-      </table>
-    </section>
-    <section class="pure-u-1 box done">
-      <table class="list">
-        <tr v-repeat="todos | todosDone" v-component="todo-item"></tr>
-      </table>
-    </section>
+	<div class="content scrollable">
+		<section class="pure-u-1 box doing">
+		  <!--small class="empty-list-notice" v-show="doingItems == 0">No active tasks</small-->
+		  <table class="list">
+			<tr v-repeat="todos | todosDoing" v-component="todo-item"></tr>
+		  </table>
+		</section>
+		<section class="pure-u-1 box qued">
+		  <p class="empty-list-notice" v-show="remainingItems == 0">No tasks in que.<br/>Use <i class="fa fa-plus"></i> button to add one.</p>
+		  <table class="list">
+			<tr v-repeat="todos | todosQued" v-component="todo-item"></tr>
+		  </table>
+		</section>
+		<section class="pure-u-1 box done">
+		  <table class="list">
+			<tr v-repeat="todos | todosDone" v-component="todo-item"></tr>
+		  </table>
+		</section>
+	</div>
 
-    <div class="affixed clickable addButton" v-on="click:onAddButtonClicked">
+    <div class="positioned clickable addButton" v-on="click:onAddButtonClicked" tabindex="1">
         <i class="fa fa-plus"></i>
     </div>
 
     <dialog id="newItemDialog" buttons="ok: 'Add'" on-accept={{validateItem}} on-accepted="{{addNewItem}}">
       <script type="text/x-template">
         <legend>Press enter to add the new to-do item, or esc to cancel</legend>
-        <input class="pure-input-1" type="text" v-model="data.content" placeholder="Add new to-do item..." />
+        <input class="pure-input-1" type="text" v-model="data.content" placeholder="Add new to-do item..." tabindex="1" v-on="keyup:accept | key 13, keyup:dismiss | key 27" />
       </script>
     </dialog>
     <dialog id="editItemDialog"  buttons="ok: 'Update'" on-accept={{validateItem}} on-accepted="{{updateItem}}">
       <script type="text/x-template">
-        <input id="itemContent" class="pure-input-1" type="text" placeholder="To-do item" v-model="data.content" />
-        <textarea id="itemMore" class="pure-input-1" placeholder="Details..." rows="4" v-model="data.more"></textarea>
+        <input id="itemContent" class="pure-input-1" type="text" placeholder="To-do item" tabindex="1" v-model="data.content"  v-on="keyup:accept | key 13, keyup:dismiss | key 27"/>
+        <textarea id="itemMore" class="pure-input-1" placeholder="Details..." rows="4" tabindex="2" v-model="data.more"></textarea>
         <label>Due date:
-          <input id="itemDue" class="pure-input-1" type="date" v-model="data.dueOn" />
+          <input id="itemDue" class="pure-input-1" type="date" tabindex="3" v-model="data.dueOn" />
         </label>
         <label>Recure:
-        <select id="itemRecure" class="pure-input-1" v-model="data.recureOn">
+        <select id="itemRecure" class="pure-input-1" tabindex="4" v-model="data.recureOn">
           <option value="0">Never</option>
           <option value="1">Daily</option>
           <option value="2">Weekly</option>
@@ -205,12 +208,13 @@
 
     <appmenu id="appmenu"></appmenu>
 
-  </div>
 </div>
 
   <script type="text/javascript" src="lib/moment.min.js"></script>
   <script type="text/javascript" src="lib/vue.min.js"></script>
   <script type="text/javascript" src="storage.js"></script>
+  <script type="text/javascript" src="functions.js"></script>
+  <script type="text/javascript" src="components.js"></script>
   <script type="text/javascript" src="driver.js"></script>
 
 </body>
