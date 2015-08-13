@@ -234,6 +234,29 @@ body{color: #666; font-size: 18px; background-color: #999;
   }
 }
 
+#newItemDialog.fade-enter > .modal {
+  animation: pop-in .3s;
+}
+#newItemDialog.fade-leave > .modal {
+  animation: pop-out .3s;
+}
+@keyframes pop-in {
+  0% {
+	   bottom: 40px;
+  }
+  100% {
+	   bottom: 82px;
+  }
+}
+@keyframes pop-out {
+  0% {
+	   bottom: 82px;
+  }
+  100% {
+	   bottom: 40px;
+  }
+}
+
 .fade-enter > .appmenu {
   animation: slide-in .3s;
 }
