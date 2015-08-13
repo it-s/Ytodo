@@ -1,18 +1,20 @@
 CACHE MANIFEST
 
-# Time: Wed Aug 12 2015 22:28:51 GMT+0000 (UTC)
+# Time: Wed Aug 13 2015 14:13:51 GMT+0000 (UTC)
 
 CACHE:
 https://fonts.googleapis.com/css?family=Roboto+Condensed:300
 https://it-s.github.io/Ytodo/
-https://it-s.github.io/Ytodo/lib/pure-min.css
-https://it-s.github.io/Ytodo/lib/grids-responsive-min.css
-https://it-s.github.io/Ytodo/lib/font-awesome.css
-https://it-s.github.io/Ytodo/lib/moment.min.js
-https://it-s.github.io/Ytodo/lib/vue.min.js
-https://it-s.github.io/Ytodo/style.css
-https://it-s.github.io/Ytodo/storage.js
-https://it-s.github.io/Ytodo/driver.js
+https://it-s.github.io/Ytodo/lib/pure-min.css?v=0.5.0
+https://it-s.github.io/Ytodo/lib/grids-responsive-min.css?v=0.5.0
+https://it-s.github.io/Ytodo/lib/font-awesome.css?v=4.3.0
+https://it-s.github.io/Ytodo/lib/moment.min.js?v=2.9.0
+https://it-s.github.io/Ytodo/lib/vue.min.js?v=0.12.10
+https://it-s.github.io/Ytodo/style.css?v=0.5.0
+https://it-s.github.io/Ytodo/storage.js?v=0.5.0
+https://it-s.github.io/Ytodo/functions.js?v=0.5.0
+https://it-s.github.io/Ytodo/components.js?v=0.5.0
+https://it-s.github.io/Ytodo/driver.js?v=0.5.0
 https://it-s.github.io/Ytodo/fonts/fontawesome-webfont.woff?v=4.3.0
 https://it-s.github.io/Ytodo/fonts/fontawesome-webfont.eot?v=4.3.0
 https://it-s.github.io/Ytodo/fonts/fontawesome-webfont.woff2?v=4.3.0
